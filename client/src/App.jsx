@@ -129,7 +129,7 @@ function App() {
   const addNote = (e) => {
     e.preventDefault();
 
-    const note = { id: String(id), content: newNote, important: false };
+    const note = { id: id + 1, content: newNote, important: false };
     const allnotes = [...notes, note];
     noteService.createNote(note).then((newNote) => {
       console.log(newNote);
