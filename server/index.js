@@ -1,7 +1,13 @@
 // console.log("hello world");
 
 // const http = require("http");
+
+//////////////////////////////////////////////////////////
+/* backend logic */
+////////////////////////////////////////////////////////////
+require("dotenv").config();
 const express = require("express");
+const Note = require("./models/note");
 const app = express();
 const cors = require("cors");
 app.use(express.static("dist"));
@@ -16,23 +22,23 @@ const requestLogger = (req, res, next) => {
 };
 app.use(requestLogger);
 
-let notes = [
-  {
-    id: "1",
-    content: "HTML is easy",
-    important: true,
-  },
-  {
-    id: "2",
-    content: "Browser can execute only JavaScript",
-    important: false,
-  },
-  {
-    id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true,
-  },
-];
+// let notes = [
+//   {
+//     id: "1",
+//     content: "HTML is easy",
+//     important: true,
+//   },
+//   {
+//     id: "2",
+//     content: "Browser can execute only JavaScript",
+//     important: false,
+//   },
+//   {
+//     id: "3",
+//     content: "GET and POST are the most important methods of HTTP protocol",
+//     important: true,
+//   },
+// ];
 
 // const app = http.createServer((req, res) => {
 //   res.writeHead(200, { "Content-Type": "application/json" });
@@ -42,17 +48,27 @@ app.get("/", (req, res) => {
   res.send("<h1>hello world<h1/>");
 });
 app.get("/api/notes", (req, res) => {
-  res.json(notes);
+  Note.find({})
+    .then((notes) => {
+      res.json(notes);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 app.get("/api/notes/:id", (req, res) => {
   const id = req.params.id;
   console.log(id);
   console.log(typeof id);
+  Note.find({})
+    .then((notes) => {
+      const note = notes.find((note) => note.id === id);
 
-  //   const note = notes.find((note) => note.id === id);
-  const note = notes.find((note) => note.id === id);
-
-  note ? res.json(note) : res.status(404).end();
+      note ? res.json(note) : res.status(404).end();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 app.delete("/api/notes/:id", (req, res) => {
   const id = Number(req.params.id);
@@ -92,6 +108,6 @@ const unknownEndPoint = (req, res) => {
   res.status(404).json({ error: "unknown end point" });
 };
 app.use(unknownEndPoint);
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT);
 console.log(`Server running on port ${PORT}`);
