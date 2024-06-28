@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  font-size: 62.5%;
+}
+body {
+  font-family: "Source Code Pro", monospace, sans-serif;
+  color: #333;
+  background-color: #ddd;
+}
+
+h1 {
+  color: brown;
+  font-size: 3.6rem;
+}
+li {
+  list-style-type: none;
+  color: #555;
+  font-weight: 600;
+  padding: 2.4rem;
+  font-size: 1.8rem;
+}
+button {
+  padding: 0.8rem;
+  margin-top: 2rem;
+}
+input {
+  padding: 0.8rem;
+}
+
+.notes {
+  padding: 0 6.4rem;
+  margin: 3.6rem 9.6rem;
+}
+.error {
+  color: red;
+  background: lightgrey;
+  font-size: 2rem;
+  border-style: solid;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.footer {
+  padding: 3.6rem 12.8rem;
+  /* margin: 3.6rem 9.6rem; */
+  border-top: 1px solid #eee;
+}
+.footer h2 {
+  font-size: 3.6rem;
+  color: brown;
+}
+.footer p {
+  font-size: 1.8rem;
+}
