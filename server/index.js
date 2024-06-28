@@ -1,6 +1,6 @@
-// console.log("hello world");
-
-// const http = require("http");
+/*
+console.log("hello world");
+const http = require("http");*/
 
 //////////////////////////////////////////////////////////
 /* backend logic */
@@ -44,9 +44,24 @@ app.use(requestLogger);
 //   res.writeHead(200, { "Content-Type": "application/json" });
 //   res.end(JSON.stringify(notes));
 // });
+
+const unknownEndPoint = (req, res) => {
+  res.status(404).json({ error: "unknown end point" });
+};
+
+const errorHandler = (err, req, res, next) => {
+  console.log(err.message);
+
+  if (err.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+  next(errcle);
+};
+
 app.get("/", (req, res) => {
   res.send("<h1>hello world<h1/>");
 });
+
 app.get("/api/notes", (req, res) => {
   Note.find({})
     .then((notes) => {
@@ -56,36 +71,7 @@ app.get("/api/notes", (req, res) => {
       console.log(err);
     });
 });
-app.get("/api/notes/:id", (req, res) => {
-  const id = req.params.id;
-  console.log(id);
-  console.log(typeof id);
-  Note.find({})
-    .then((notes) => {
-      const note = notes.find((note) => note.id === id);
 
-      note ? res.json(note) : res.status(404).end();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
-app.delete("/api/notes/:id", (req, res) => {
-  const id = Number(req.params.id);
-  console.log(id);
-  console.log(typeof id);
-
-  //   const note = notes.find((note) => note.id === id);
-  notes = notes.filter((note) => note.id !== id);
-
-  res.status(204).end();
-});
-
-const generateId = () => {
-  const maxId =
-    notes.length > 0 ? Math.max(...notes.map((note) => Number(note.id))) : 0;
-  return String(maxId + 1);
-};
 app.post("/api/notes", (req, res) => {
   const body = req.body;
   console.log(body);
@@ -94,20 +80,73 @@ app.post("/api/notes", (req, res) => {
     return res.status(404).json({ error: "content missing" });
   }
 
-  const note = {
-    id: generateId(),
+  const note = new Note({
     content: body.content,
     important: Boolean(body.important) || false,
-  };
+  });
 
-  notes = notes.concat(note);
-  res.json(note);
+  note.save().then((savedNote) => {
+    res.json(savedNote);
+  });
 });
 
-const unknownEndPoint = (req, res) => {
-  res.status(404).json({ error: "unknown end point" });
-};
+app.get("/api/notes/:id", (req, res, next) => {
+  const id = req.params.id;
+  console.log(id);
+  console.log(typeof id);
+  Note.findById(id)
+    .then((note) => {
+      note ? res.json(note) : res.status(404).end();
+    })
+    .catch((err) => {
+      console.log("error occured");
+      // res.status(400).send({ error: "malformatted id" });
+      next(err);
+    });
+});
+
+app.put("/api/notes/:id", (req, res, next) => {
+  const body = req.body;
+  const note = {
+    content: body.content,
+    important: body.important,
+  };
+  const id = req.params.id;
+  console.log(id);
+  console.log(typeof id);
+
+  Note.findByIdAndUpdate(id, note, { new: true })
+    .then((updateNote) => {
+      res.json(updateNote);
+    })
+    .catch((err) => next(err));
+});
+
+app.delete("/api/notes/:id", (req, res, next) => {
+  const id = req.params.id;
+  console.log(id);
+  console.log(typeof id);
+
+  Note.findByIdAndDelete(id)
+    .then((note) => {
+      res.status(204).end();
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+
+  //
+});
+
+// const generateId = () => {
+//   const maxId =
+//     notes.length > 0 ? Math.max(...notes.map((note) => Number(note.id))) : 0;
+//   return String(maxId + 1);
+// };
+
 app.use(unknownEndPoint);
+app.use(errorHandler);
 const PORT = process.env.PORT;
 app.listen(PORT);
 console.log(`Server running on port ${PORT}`);

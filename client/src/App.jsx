@@ -209,6 +209,7 @@ function App() {
               <Note
                 key={note.id}
                 note={note}
+                id={id}
                 toggleImportant={() => toogleImportant(note.id)}
               />
             );
