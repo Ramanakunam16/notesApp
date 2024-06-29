@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import Note from "./components/Note";
-// import axios from "axios";
 import noteService from "./services/notes";
 import Notification from "./components/Notification";
 import Footer from "./components/Footer";
+
 // function Display({ counter }) {
 //   return <div>{counter}</div>;
 // }
@@ -117,7 +117,6 @@ function App() {
 
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
-  // const [siNo, setSiNo] = useState(0);
   const [showAll, setShowAll] = useState(true);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -139,11 +138,6 @@ function App() {
 
   const showAllNotes = () => {
     setShowAll((showAll) => !showAll);
-  };
-
-  const clearNotes = () => {
-    localStorage.removeItem("notes");
-    setNotes([]);
   };
 
   const toogleImportant = (id) => {
@@ -174,6 +168,7 @@ function App() {
   useEffect(() => {
     noteService.getAllNotes().then((initialNotes) => {
       // console.log();
+      console.log(initialNotes);
       setNotes(initialNotes);
     });
   }, []);
@@ -189,7 +184,7 @@ function App() {
   const notesToShow = showAll
     ? notes
     : notes.filter((note) => note.important === true);
-
+  console.log(notesToShow);
   /////////////////////////////////////////////////////////////////////////
   /* component to be rendered */
   /////////////////////////////////////////////////////////////////////////
@@ -228,7 +223,6 @@ function App() {
         <button onClick={showAllNotes}>
           show {showAll ? "important" : "ALL"}
         </button>
-        <button onClick={clearNotes}>Clear All</button>
       </div>
       <Footer />
     </>
