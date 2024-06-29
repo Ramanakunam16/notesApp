@@ -117,7 +117,7 @@ function App() {
 
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
-  const [id, setId] = useState(notes.length);
+  // const [siNo, setSiNo] = useState(0);
   const [showAll, setShowAll] = useState(true);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -129,7 +129,7 @@ function App() {
   const addNote = (e) => {
     e.preventDefault();
 
-    const note = { id: id + 1, content: newNote, important: false };
+    const note = { content: newNote, important: false };
     const allnotes = [...notes, note];
     noteService.createNote(note).then((newNote) => {
       console.log(newNote);
@@ -144,7 +144,6 @@ function App() {
   const clearNotes = () => {
     localStorage.removeItem("notes");
     setNotes([]);
-    setId(0);
   };
 
   const toogleImportant = (id) => {
@@ -176,7 +175,6 @@ function App() {
     noteService.getAllNotes().then((initialNotes) => {
       // console.log();
       setNotes(initialNotes);
-      setId(initialNotes.length);
     });
   }, []);
 
@@ -202,14 +200,14 @@ function App() {
         {error ? <Notification message={errorMessage} /> : ""}
         <h1>Notes</h1>
         <ul>
-          {notesToShow.map((note) => {
+          {notesToShow.map((note, i) => {
             // console.log(note);
 
             return (
               <Note
                 key={note.id}
                 note={note}
-                id={id}
+                num={i + 1}
                 toggleImportant={() => toogleImportant(note.id)}
               />
             );
@@ -224,9 +222,7 @@ function App() {
               setNewNote(e.target.value);
             }}
           />
-          <button type="submit" onClick={() => setId(id + 1)}>
-            Add Note
-          </button>
+          <button type="submit">Add Note</button>
         </form>
 
         <button onClick={showAllNotes}>
